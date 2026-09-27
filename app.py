@@ -1,44 +1,38 @@
-import os
-import re
-from datetime import datetime
-
-import requests
-import psycopg2
-from psycopg2.extras import RealDictCursor
-
-from flask import (
-    Flask,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    session,
-    flash
-)
-
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 
-# Render'da Environment Variable orqali beramiz.
-# Lokal test uchun esa vaqtinchalik qiymat ishlatamiz.
-app.secret_key = os.environ.get(
-    "SECRET_KEY",
-    "local-development-secret-change-me"
+app.wsgi_app = ProxyFix(
+    app.wsgi_app,
+    x_for=1,
+    x_proto=1,
+    x_host=1
 )
 
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "change-this-secret-key-before-production"
+)
 
-# ============================================================
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+
+# =========================================================
 # DATABASE
-# ============================================================
+# =========================================================
 
 def get_database_url():
     database_url = os.environ.get("DATABASE_URL")
 
     if not database_url:
-        return None
+        raise RuntimeError(
+            "DATABASE_URL environment variable is not configured."
+        )
 
-    # Ba'zi hostinglarda postgres:// kelishi mumkin.
-    # psycopg2 uchun postgresql:// ishlatamiz.
+    # Some providers may still return postgres://
     if database_url.startswith("postgres://"):
         database_url = database_url.replace(
             "postgres://",
@@ -50,14 +44,7 @@ def get_database_url():
 
 
 def get_connection():
-    database_url = get_database_url()
-
-    if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL environment variable is not configured."
-        )
-
-    return psycopg2.connect(database_url)
+    return psycopg2.connect(get_database_url())
 
 
 def init_database():
@@ -65,28 +52,21 @@ def init_database():
 
     try:
         with connection.cursor() as cursor:
-
-            cursor.execute("""
+            cursor.execute(
+                """
                 CREATE TABLE IF NOT EXISTS users (
                     id SERIAL PRIMARY KEY,
-
                     first_name VARCHAR(100) NOT NULL,
-
                     last_name VARCHAR(100) NOT NULL,
-
                     email VARCHAR(255) NOT NULL UNIQUE,
-
                     phone VARCHAR(30) NOT NULL,
-
                     latitude DOUBLE PRECISION NOT NULL,
-
                     longitude DOUBLE PRECISION NOT NULL,
-
                     address TEXT,
-
                     created_at TIMESTAMP NOT NULL
-                );
-            """)
+                )
+                """
+            )
 
         connection.commit()
 
@@ -94,9 +74,9 @@ def init_database():
         connection.close()
 
 
-# ============================================================
+# =========================================================
 # VALIDATION
-# ============================================================
+# =========================================================
 
 def valid_email(email):
     pattern = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
@@ -104,36 +84,30 @@ def valid_email(email):
 
 
 def valid_phone(phone):
-    digits = re.sub(r"\D", "", phone)
-    return 7 <= len(digits) <= 15
+    cleaned = re.sub(r"[\s\-()+]", "", phone)
+    return cleaned.isdigit() and 7 <= len(cleaned) <= 15
 
 
 def valid_coordinates(latitude, longitude):
-
     try:
         latitude = float(latitude)
         longitude = float(longitude)
 
-        if not -90 <= latitude <= 90:
-            return False
-
-        if not -180 <= longitude <= 180:
-            return False
-
-        return True
+        return (
+            -90 <= latitude <= 90
+            and -180 <= longitude <= 180
+        )
 
     except (TypeError, ValueError):
         return False
 
 
-# ============================================================
+# =========================================================
 # REVERSE GEOCODING
-# ============================================================
+# =========================================================
 
 def get_address(latitude, longitude):
-
     try:
-
         response = requests.get(
             "https://nominatim.openstreetmap.org/reverse",
             params={
@@ -144,30 +118,28 @@ def get_address(latitude, longitude):
                 "addressdetails": 1
             },
             headers={
-                "User-Agent":
-                    "LotusHeartFlaskWebsite/1.0"
+                "User-Agent": "LotusHeartFlaskWebsite/1.0"
             },
             timeout=10
         )
 
-        if response.ok:
+        response.raise_for_status()
 
-            data = response.json()
+        data = response.json()
 
-            return data.get(
-                "display_name",
-                "Address unavailable"
-            )
+        return data.get(
+            "display_name",
+            "Address unavailable"
+        )
 
-    except requests.RequestException:
-        pass
+    except Exception as error:
+        print("Reverse geocoding error:", error)
+        return "Address unavailable"
 
-    return "Address unavailable"
 
-
-# ============================================================
+# =========================================================
 # REGISTER
-# ============================================================
+# =========================================================
 
 @app.route("/", methods=["GET", "POST"])
 def register():
@@ -207,79 +179,64 @@ def register():
             ""
         ).strip()
 
-
-        # ----------------------------------------------------
-        # VALIDATION
-        # ----------------------------------------------------
+        # -------------------------
+        # Required fields
+        # -------------------------
 
         if not first_name:
-            flash(
-                "Please enter your first name.",
-                "error"
+            return render_template(
+                "register.html",
+                error="Please enter your first name."
             )
-
-            return redirect(
-                url_for("register")
-            )
-
 
         if not last_name:
-            flash(
-                "Please enter your last name.",
-                "error"
+            return render_template(
+                "register.html",
+                error="Please enter your last name."
             )
 
-            return redirect(
-                url_for("register")
+        if not email:
+            return render_template(
+                "register.html",
+                error="Please enter your email."
             )
 
+        if not phone:
+            return render_template(
+                "register.html",
+                error="Please enter your phone number."
+            )
+
+        if not latitude or not longitude:
+            return render_template(
+                "register.html",
+                error="Please allow your location first."
+            )
+
+        # -------------------------
+        # Validation
+        # -------------------------
 
         if not valid_email(email):
-
-            flash(
-                "Please enter a valid email address.",
-                "error"
+            return render_template(
+                "register.html",
+                error="Please enter a valid email address."
             )
-
-            return redirect(
-                url_for("register")
-            )
-
 
         if not valid_phone(phone):
-
-            flash(
-                "Please enter a valid phone number.",
-                "error"
+            return render_template(
+                "register.html",
+                error="Please enter a valid phone number."
             )
 
-            return redirect(
-                url_for("register")
+        if not valid_coordinates(latitude, longitude):
+            return render_template(
+                "register.html",
+                error="Invalid location coordinates."
             )
-
-
-        if not valid_coordinates(
-            latitude,
-            longitude
-        ):
-
-            flash(
-                "Please allow location access.",
-                "error"
-            )
-
-            return redirect(
-                url_for("register")
-            )
-
 
         latitude = float(latitude)
         longitude = float(longitude)
-
-
-        # ----------------------------------------------------
-        # CHECK EXISTING EMAIL
-        # ----------------------------------------------------
 
         connection = get_connection()
 
@@ -288,6 +245,10 @@ def register():
             with connection.cursor(
                 cursor_factory=RealDictCursor
             ) as cursor:
+
+                # -------------------------
+                # Check existing email
+                # -------------------------
 
                 cursor.execute(
                     """
@@ -300,32 +261,25 @@ def register():
 
                 existing_user = cursor.fetchone()
 
-
                 if existing_user:
 
-                    flash(
-                        "This email is already registered.",
-                        "error"
+                    return render_template(
+                        "register.html",
+                        error="This email is already registered."
                     )
 
-                    return redirect(
-                        url_for("register")
-                    )
-
-
-                # ------------------------------------------------
-                # GET ADDRESS
-                # ------------------------------------------------
+                # -------------------------
+                # Get address
+                # -------------------------
 
                 address = get_address(
                     latitude,
                     longitude
                 )
 
-
-                # ------------------------------------------------
-                # SAVE USER
-                # ------------------------------------------------
+                # -------------------------
+                # Save user
+                # -------------------------
 
                 cursor.execute(
                     """
@@ -359,59 +313,58 @@ def register():
                         latitude,
                         longitude,
                         address,
-                        datetime.utcnow()
+                        datetime.now(timezone.utc)
                     )
                 )
 
                 user = cursor.fetchone()
 
-                connection.commit()
+            connection.commit()
 
-
-                # ------------------------------------------------
-                # SESSION
-                # ------------------------------------------------
-
-                session["user_id"] = user["id"]
-
-                session["user_name"] = first_name
-
-                return redirect(
-                    url_for("home")
-                )
-
-        except psycopg2.Error:
+        except Exception as error:
 
             connection.rollback()
 
-            flash(
-                "Database error. Please try again.",
-                "error"
+            print(
+                "Registration error:",
+                error
             )
 
-            return redirect(
-                url_for("register")
+            return render_template(
+                "register.html",
+                error="Something went wrong. Please try again."
             )
 
         finally:
-
             connection.close()
 
+        # -------------------------
+        # Login session
+        # -------------------------
+
+        session["user_id"] = user["id"]
+
+        session["user_name"] = (
+            f"{first_name} {last_name}"
+        )
+
+        return redirect(
+            url_for("home")
+        )
 
     return render_template(
         "register.html"
     )
 
 
-# ============================================================
+# =========================================================
 # HOME
-# ============================================================
+# =========================================================
 
 @app.route("/home")
 def home():
 
     if "user_id" not in session:
-
         return redirect(
             url_for("register")
         )
@@ -420,14 +373,14 @@ def home():
         "home.html",
         user_name=session.get(
             "user_name",
-            ""
+            "Friend"
         )
     )
 
 
-# ============================================================
+# =========================================================
 # LOGOUT
-# ============================================================
+# =========================================================
 
 @app.route("/logout")
 def logout():
@@ -439,26 +392,26 @@ def logout():
     )
 
 
-# ============================================================
+# =========================================================
 # ADMIN
-# ============================================================
+# =========================================================
 
 @app.route("/admin/users")
 def admin_users():
 
-    # Hozircha oddiy admin secret orqali himoyalaymiz.
-    admin_key = request.args.get("key")
-
-    correct_key = os.environ.get(
+    admin_key = os.environ.get(
         "ADMIN_KEY"
     )
 
-    if not correct_key:
+    provided_key = request.args.get(
+        "key"
+    )
+
+    if not admin_key:
         return "ADMIN_KEY is not configured.", 500
 
-    if admin_key != correct_key:
+    if not provided_key or provided_key != admin_key:
         return "Unauthorized", 401
-
 
     connection = get_connection()
 
@@ -481,16 +434,14 @@ def admin_users():
                     address,
                     created_at
                 FROM users
-                ORDER BY id DESC
+                ORDER BY created_at DESC
                 """
             )
 
             users = cursor.fetchall()
 
     finally:
-
         connection.close()
-
 
     return render_template(
         "admin.html",
@@ -498,25 +449,47 @@ def admin_users():
     )
 
 
-# ============================================================
+# =========================================================
 # HEALTH CHECK
-# ============================================================
+# =========================================================
 
 @app.route("/health")
 def health():
 
-    return {
+    return jsonify({
         "status": "ok"
-    }
+    })
 
 
-# ============================================================
-# START
-# ============================================================
+# =========================================================
+# STARTUP
+# =========================================================
+
+def startup_database():
+
+    try:
+
+        init_database()
+
+        print(
+            "Database initialized successfully."
+        )
+
+    except Exception as error:
+
+        print(
+            "Database initialization error:",
+            error
+        )
+
+
+# =========================================================
+# LOCAL RUN
+# =========================================================
 
 if __name__ == "__main__":
 
-    init_database()
+    startup_database()
 
     port = int(
         os.environ.get(
