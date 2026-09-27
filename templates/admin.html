@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Admin — Users</title>
+
+<style>
+
+body {
+
+    margin: 0;
+
+    padding: 30px;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    color: white;
+
+    background:
+        #0c0610;
+}
+
+h1 {
+    margin-bottom: 25px;
+}
+
+.wrapper {
+
+    overflow-x: auto;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+}
+
+table {
+
+    width: 100%;
+
+    min-width: 1200px;
+
+    border-collapse:
+        collapse;
+
+    background:
+        #170d1c;
+}
+
+th,
+td {
+
+    padding: 13px;
+
+    text-align: left;
+
+    border:
+        1px solid
+        #332039;
+}
+
+th {
+
+    background:
+        #2b1231;
+}
+
+td {
+
+    color:
+        #ddd;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+    Registered Users
+</h1>
+
+<div class="wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>First name</th>
+
+<th>Last name</th>
+
+<th>Email</th>
+
+<th>Phone</th>
+
+<th>Latitude</th>
+
+<th>Longitude</th>
+
+<th>Address</th>
+
+<th>Created</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for user in users %}
+
+<tr>
+
+<td>
+    {{ user.id }}
+</td>
+
+<td>
+    {{ user.first_name }}
+</td>
+
+<td>
+    {{ user.last_name }}
+</td>
+
+<td>
+    {{ user.email }}
+</td>
+
+<td>
+    {{ user.phone }}
+</td>
+
+<td>
+    {{ user.latitude }}
+</td>
+
+<td>
+    {{ user.longitude }}
+</td>
+
+<td>
+    {{ user.address }}
+</td>
+
+<td>
+    {{ user.created_at }}
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</body>
+
+</html>

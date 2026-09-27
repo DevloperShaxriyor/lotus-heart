@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Lotus Heart — Registration</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 25px;
+
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(255, 70, 170, .25),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 90% 90%,
+            rgba(110, 60, 255, .2),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            135deg,
+            #08020e,
+            #17051d,
+            #09030f
+        );
+
+    overflow-x: hidden;
+}
+
+
+/* ==============================
+   BACKGROUND
+============================== */
+
+.background {
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    overflow: hidden;
+}
+
+.glow {
+
+    position: absolute;
+
+    width: 450px;
+
+    height: 450px;
+
+    border-radius: 50%;
+
+    filter: blur(80px);
+
+    opacity: .35;
+
+    animation:
+        moveGlow 10s ease-in-out infinite alternate;
+}
+
+.glow.one {
+
+    background: #ff329e;
+
+    top: -200px;
+
+    left: -150px;
+}
+
+.glow.two {
+
+    background: #6534ff;
+
+    right: -200px;
+
+    bottom: -200px;
+
+    animation-delay: 2s;
+}
+
+@keyframes moveGlow {
+
+    from {
+        transform: translate(0, 0);
+    }
+
+    to {
+        transform: translate(100px, 70px);
+    }
+}
+
+
+/* ==============================
+   CARD
+============================== */
+
+.card {
+
+    position: relative;
+
+    z-index: 5;
+
+    width: min(
+        100%,
+        550px
+    );
+
+    padding: 38px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .075
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .14
+        );
+
+    backdrop-filter:
+        blur(30px);
+
+    -webkit-backdrop-filter:
+        blur(30px);
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,.5);
+
+    animation:
+        cardAppear .8s ease;
+}
+
+@keyframes cardAppear {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(30px)
+            scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* ==============================
+   TITLE
+============================== */
+
+.title {
+
+    text-align: center;
+
+    font-size: 36px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff79c8,
+            #ffffff,
+            #ff79c8
+        );
+
+    -webkit-background-clip: text;
+
+    background-clip: text;
+
+    color: transparent;
+
+    margin-bottom: 8px;
+}
+
+.subtitle {
+
+    text-align: center;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            .62
+        );
+
+    font-size: 14px;
+
+    margin-bottom: 30px;
+}
+
+
+/* ==============================
+   FLASH MESSAGE
+============================== */
+
+.flash {
+
+    padding: 13px 15px;
+
+    border-radius: 13px;
+
+    margin-bottom: 15px;
+
+    font-size: 13px;
+
+    background:
+        rgba(
+            255,
+            50,
+            90,
+            .12
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            80,
+            110,
+            .2
+        );
+
+    color: #ffb4c1;
+}
+
+
+/* ==============================
+   FORM
+============================== */
+
+.form-row {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 14px;
+}
+
+.form-group {
+
+    margin-bottom: 16px;
+}
+
+.form-group.full {
+
+    grid-column:
+        1 / -1;
+}
+
+label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 13px;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            .72
+        );
+}
+
+input {
+
+    width: 100%;
+
+    height: 52px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .1
+        );
+
+    outline: none;
+
+    padding:
+        0 16px;
+
+    color: white;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .22
+        );
+
+    font-size: 14px;
+
+    transition:
+        border .2s,
+        box-shadow .2s,
+        background .2s;
+}
+
+input::placeholder {
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            .32
+        );
+}
+
+input:focus {
+
+    border-color:
+        rgba(
+            255,
+            100,
+            190,
+            .8
+        );
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .3
+        );
+
+    box-shadow:
+        0 0 0 4px
+        rgba(
+            255,
+            70,
+            170,
+            .08
+        );
+}
+
+
+/* ==============================
+   LOCATION
+============================== */
+
+.location {
+
+    margin-top: 5px;
+
+    padding: 20px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .045
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .09
+        );
+}
+
+.location-title {
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    margin-bottom: 7px;
+}
+
+.location-text {
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            .55
+        );
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+    margin-bottom: 15px;
+}
+
+.location-button {
+
+    width: 100%;
+
+    height: 50px;
+
+    border: 0;
+
+    border-radius: 14px;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4da6,
+            #9b2d91
+        );
+
+    box-shadow:
+        0 12px 35px
+        rgba(
+            255,
+            50,
+            160,
+            .2
+        );
+
+    transition:
+        transform .2s,
+        box-shadow .2s,
+        opacity .2s;
+}
+
+.location-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 16px 40px
+        rgba(
+            255,
+            50,
+            160,
+            .3
+        );
+}
+
+.location-button:disabled {
+
+    cursor: wait;
+
+    opacity: .65;
+}
+
+.location-status {
+
+    margin-top: 10px;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    min-height: 18px;
+}
+
+
+/* ==============================
+   SUBMIT
+============================== */
+
+.submit {
+
+    width: 100%;
+
+    height: 55px;
+
+    margin-top: 20px;
+
+    border: 0;
+
+    border-radius: 16px;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4da6,
+            #b42c88
+        );
+
+    box-shadow:
+        0 15px 40px
+        rgba(
+            255,
+            50,
+            160,
+            .22
+        );
+
+    transition:
+        transform .2s,
+        box-shadow .2s;
+}
+
+.submit:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 18px 45px
+        rgba(
+            255,
+            50,
+            160,
+            .32
+        );
+}
+
+
+/* ==============================
+   RESPONSIVE
+============================== */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 14px;
+    }
+
+    .card {
+        padding: 25px 20px;
+        border-radius: 23px;
+    }
+
+    .title {
+        font-size: 30px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="background">
+
+    <div class="glow one"></div>
+
+    <div class="glow two"></div>
+
+</div>
+
+
+<div class="card">
+
+    <h1 class="title">
+        Welcome ❤️
+    </h1>
+
+    <p class="subtitle">
+        Please complete your registration
+        to enter the experience.
+    </p>
+
+
+    {% with messages =
+        get_flashed_messages(
+            with_categories=true
+        )
+    %}
+
+        {% for category, message in messages %}
+
+            <div class="flash">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endwith %}
+
+
+    <form
+        method="POST"
+        id="registrationForm"
+    >
+
+
+        <div class="form-row">
+
+
+            <div class="form-group">
+
+                <label>
+                    First name
+                </label>
+
+                <input
+                    type="text"
+                    name="first_name"
+                    placeholder="First name"
+                    maxlength="100"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Last name
+                </label>
+
+                <input
+                    type="text"
+                    name="last_name"
+                    placeholder="Last name"
+                    maxlength="100"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="example@gmail.com"
+                    maxlength="255"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <label>
+                    Phone number
+                </label>
+
+                <input
+                    type="tel"
+                    name="phone"
+                    placeholder="+998 90 123 45 67"
+                    maxlength="30"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="location">
+
+            <div class="location-title">
+                📍 Location permission
+            </div>
+
+            <div class="location-text">
+
+                To continue, press the button below.
+                Chrome will ask for permission to access
+                your location. Your location is only sent
+                after you grant permission.
+
+            </div>
+
+
+            <button
+                type="button"
+                class="location-button"
+                id="locationButton"
+            >
+                📍 Allow Location
+            </button>
+
+
+            <div
+                class="location-status"
+                id="locationStatus"
+            >
+                Location hasn't been added yet.
+            </div>
+
+        </div>
+
+
+        <input
+            type="hidden"
+            name="latitude"
+            id="latitude"
+        >
+
+        <input
+            type="hidden"
+            name="longitude"
+            id="longitude"
+        >
+
+
+        <button
+            type="submit"
+            class="submit"
+        >
+            Continue ❤️
+        </button>
+
+
+    </form>
+
+</div>
+
+
+<script>
+
+const locationButton =
+    document.getElementById(
+        "locationButton"
+    );
+
+const locationStatus =
+    document.getElementById(
+        "locationStatus"
+    );
+
+const latitudeInput =
+    document.getElementById(
+        "latitude"
+    );
+
+const longitudeInput =
+    document.getElementById(
+        "longitude"
+    );
+
+
+locationButton.addEventListener(
+    "click",
+    function () {
+
+        if (!navigator.geolocation) {
+
+            locationStatus.textContent =
+                "❌ Your browser does not support location.";
+
+            locationStatus.style.color =
+                "#ff8fa3";
+
+            return;
+        }
+
+
+        locationButton.disabled = true;
+
+        locationButton.textContent =
+            "⏳ Requesting permission...";
+
+        locationStatus.textContent =
+            "Chrome is asking for your location permission...";
+
+        locationStatus.style.color =
+            "#ffd0eb";
+
+
+        navigator.geolocation.getCurrentPosition(
+
+            function (position) {
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
+
+
+                latitudeInput.value =
+                    latitude;
+
+                longitudeInput.value =
+                    longitude;
+
+
+                locationStatus.innerHTML =
+                    "✓ Location successfully added.";
+
+                locationStatus.style.color =
+                    "#8dffbf";
+
+
+                locationButton.textContent =
+                    "✓ Location Added";
+
+                locationButton.disabled =
+                    false;
+
+            },
+
+
+            function (error) {
+
+                locationButton.disabled =
+                    false;
+
+                locationButton.textContent =
+                    "📍 Allow Location";
+
+
+                if (error.code === 1) {
+
+                    locationStatus.innerHTML =
+                        "❌ Permission denied. " +
+                        "Click the site settings icon near " +
+                        "the address bar and set Location to Allow.";
+
+                }
+
+                else if (error.code === 2) {
+
+                    locationStatus.innerHTML =
+                        "❌ Chrome could not determine your location.";
+
+                }
+
+                else if (error.code === 3) {
+
+                    locationStatus.innerHTML =
+                        "❌ Location request timed out.";
+
+                }
+
+                else {
+
+                    locationStatus.innerHTML =
+                        "❌ Unable to get your location.";
+
+                }
+
+
+                locationStatus.style.color =
+                    "#ff9aa3";
+
+            },
+
+
+            {
+                enableHighAccuracy: true,
+                timeout: 20000,
+                maximumAge: 0
+            }
+
+        );
+
+    }
+);
+
+
+document
+    .getElementById("registrationForm")
+    .addEventListener(
+        "submit",
+        function (event) {
+
+            if (
+                !latitudeInput.value ||
+                !longitudeInput.value
+            ) {
+
+                event.preventDefault();
+
+                locationStatus.textContent =
+                    "❌ Please allow location before continuing.";
+
+                locationStatus.style.color =
+                    "#ff9aa3";
+
+                locationButton.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

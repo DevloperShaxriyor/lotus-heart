@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Lotus Heart</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+}
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(255,70,170,.2),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #07020d,
+            #18051f,
+            #2a092f,
+            #08020e
+        );
+}
+
+
+/* =====================================
+   BACKGROUND
+===================================== */
+
+.background {
+
+    position: fixed;
+
+    inset: 0;
+
+    overflow: hidden;
+}
+
+
+.glow {
+
+    position: absolute;
+
+    width: 500px;
+
+    height: 500px;
+
+    border-radius: 50%;
+
+    filter: blur(70px);
+
+    opacity: .3;
+
+    animation:
+        glowMove 10s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+.glow.one {
+
+    background: #ff329e;
+
+    left: -200px;
+
+    top: -200px;
+}
+
+.glow.two {
+
+    background: #7035ff;
+
+    right: -200px;
+
+    bottom: -200px;
+
+    animation-delay: 3s;
+}
+
+
+@keyframes glowMove {
+
+    from {
+        transform:
+            translate(0,0)
+            scale(1);
+    }
+
+    to {
+        transform:
+            translate(100px,70px)
+            scale(1.2);
+    }
+}
+
+
+/* =====================================
+   STARS
+===================================== */
+
+.stars {
+
+    position: absolute;
+
+    inset: 0;
+}
+
+.star {
+
+    position: absolute;
+
+    width: 3px;
+
+    height: 3px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    opacity: .3;
+
+    animation:
+        twinkle 3s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: .15;
+        transform: scale(.6);
+    }
+
+    50% {
+        opacity: .9;
+        transform: scale(1.5);
+    }
+}
+
+
+/* =====================================
+   LOTUS
+===================================== */
+
+.lotus-area {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 3%;
+
+    transform:
+        translateX(-50%);
+
+    width: 500px;
+
+    height: 300px;
+
+    z-index: 2;
+
+    filter:
+        drop-shadow(
+            0 0 30px
+            rgba(255,70,180,.35)
+        );
+}
+
+
+.lotus {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 0;
+
+    transform:
+        translateX(-50%);
+
+    width: 440px;
+
+    height: 260px;
+}
+
+
+.petal {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 0;
+
+    width: 120px;
+
+    height: 215px;
+
+    transform-origin:
+        bottom center;
+
+    border-radius:
+        80% 20% 55% 45% /
+        75% 30% 70% 25%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffd2ef,
+            #ff65b9 50%,
+            #9c236e
+        );
+
+    box-shadow:
+        inset 0 0 20px
+        rgba(255,255,255,.35),
+
+        0 0 20px
+        rgba(255,70,180,.2);
+
+    opacity: 0;
+
+    animation:
+        openPetal 2s
+        cubic-bezier(.2,.8,.2,1)
+        forwards;
+}
+
+
+.p1 {
+    transform:
+        translateX(-50%)
+        rotate(0deg)
+        scale(.1);
+
+    animation-delay: .1s;
+}
+
+.p2 {
+    transform:
+        translateX(-50%)
+        rotate(-35deg)
+        scale(.1);
+
+    animation-delay: .25s;
+}
+
+.p3 {
+    transform:
+        translateX(-50%)
+        rotate(35deg)
+        scale(.1);
+
+    animation-delay: .4s;
+}
+
+.p4 {
+    transform:
+        translateX(-50%)
+        rotate(-65deg)
+        scale(.1);
+
+    animation-delay: .55s;
+}
+
+.p5 {
+    transform:
+        translateX(-50%)
+        rotate(65deg)
+        scale(.1);
+
+    animation-delay: .7s;
+}
+
+.p6 {
+    transform:
+        translateX(-50%)
+        rotate(-17deg)
+        scale(.1);
+
+    animation-delay: .85s;
+}
+
+.p7 {
+    transform:
+        translateX(-50%)
+        rotate(17deg)
+        scale(.1);
+
+    animation-delay: 1s;
+}
+
+
+@keyframes openPetal {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateX(-50%)
+            rotate(var(--rotation))
+            scale(1);
+    }
+}
+
+
+/* =====================================
+   HEART
+===================================== */
+
+.heart-container {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 46%;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 10;
+
+    width: 180px;
+
+    height: 180px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+
+.heart {
+
+    width: 125px;
+
+    height: 125px;
+
+    position: relative;
+
+    transform:
+        rotate(-45deg);
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff79c6,
+            #ff164f
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(255,30,100,.85),
+
+        0 0 90px
+        rgba(255,30,100,.35);
+
+    animation:
+        heartbeat 1.25s
+        ease-in-out
+        infinite;
+}
+
+
+.heart::before,
+.heart::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 125px;
+
+    height: 125px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff79c6,
+            #ff164f
+        );
+
+    border-radius: 50%;
+}
+
+
+.heart::before {
+
+    top: -62px;
+
+    left: 0;
+}
+
+
+.heart::after {
+
+    top: 0;
+
+    left: 62px;
+}
+
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+
+        transform:
+            rotate(-45deg)
+            scale(.88);
+    }
+
+    25% {
+
+        transform:
+            rotate(-45deg)
+            scale(1);
+    }
+
+    40% {
+
+        transform:
+            rotate(-45deg)
+            scale(.92);
+    }
+
+    60% {
+
+        transform:
+            rotate(-45deg)
+            scale(1.05);
+    }
+
+    80% {
+
+        transform:
+            rotate(-45deg)
+            scale(.94);
+    }
+}
+
+
+/* =====================================
+   CONTENT
+===================================== */
+
+.content {
+
+    position: absolute;
+
+    z-index: 20;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    text-align: center;
+
+    width: 90%;
+
+    pointer-events: none;
+}
+
+
+.content h1 {
+
+    margin-top: 210px;
+
+    font-size:
+        clamp(
+            28px,
+            5vw,
+            54px
+        );
+
+    letter-spacing: 4px;
+
+    text-shadow:
+        0 0 25px
+        rgba(255,130,200,.8);
+}
+
+
+.content p {
+
+    margin-top: 12px;
+
+    font-size:
+        clamp(
+            13px,
+            2vw,
+            18px
+        );
+
+    opacity: .65;
+}
+
+
+.logout {
+
+    position: fixed;
+
+    top: 20px;
+
+    right: 20px;
+
+    z-index: 100;
+
+    padding: 10px 16px;
+
+    border-radius: 12px;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    backdrop-filter:
+        blur(15px);
+}
+
+
+/* =====================================
+   PARTICLES
+===================================== */
+
+.particle {
+
+    position: absolute;
+
+    bottom: -20px;
+
+    width: 5px;
+
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: #ff92d1;
+
+    box-shadow:
+        0 0 15px
+        #ff67bc;
+
+    animation:
+        floatUp linear infinite;
+
+    opacity: 0;
+}
+
+
+@keyframes floatUp {
+
+    0% {
+
+        transform:
+            translateY(0)
+            scale(.4);
+
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .8;
+    }
+
+    85% {
+        opacity: .6;
+    }
+
+    100% {
+
+        transform:
+            translateY(-110vh)
+            scale(1);
+
+        opacity: 0;
+    }
+}
+
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 600px) {
+
+    .lotus-area {
+
+        width: 380px;
+
+        transform:
+            translateX(-50%)
+            scale(.7);
+
+        transform-origin:
+            bottom center;
+    }
+
+
+    .heart {
+
+        width: 100px;
+
+        height: 100px;
+    }
+
+
+    .heart::before,
+    .heart::after {
+
+        width: 100px;
+
+        height: 100px;
+    }
+
+
+    .heart::before {
+
+        top: -50px;
+    }
+
+
+    .heart::after {
+
+        left: 50px;
+    }
+
+
+    .content h1 {
+
+        margin-top: 165px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="background">
+
+    <div class="glow one"></div>
+
+    <div class="glow two"></div>
+
+    <div
+        class="stars"
+        id="stars"
+    ></div>
+
+
+    {% for i in range(30) %}
+
+        <div
+            class="particle"
+            style="
+                left: {{ (i * 31) % 100 }}%;
+                animation-duration: {{ 7 + (i % 7) }}s;
+                animation-delay: {{ i % 6 }}s;
+            "
+        ></div>
+
+    {% endfor %}
+
+</div>
+
+
+<a
+    href="{{ url_for('logout') }}"
+    class="logout"
+>
+    Logout
+</a>
+
+
+<div class="lotus-area">
+
+    <div class="lotus">
+
+        <div
+            class="petal p1"
+            style="--rotation:0deg"
+        ></div>
+
+        <div
+            class="petal p2"
+            style="--rotation:-35deg"
+        ></div>
+
+        <div
+            class="petal p3"
+            style="--rotation:35deg"
+        ></div>
+
+        <div
+            class="petal p4"
+            style="--rotation:-65deg"
+        ></div>
+
+        <div
+            class="petal p5"
+            style="--rotation:65deg"
+        ></div>
+
+        <div
+            class="petal p6"
+            style="--rotation:-17deg"
+        ></div>
+
+        <div
+            class="petal p7"
+            style="--rotation:17deg"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<div class="heart-container">
+
+    <div class="heart"></div>
+
+</div>
+
+
+<div class="content">
+
+    <h1>
+        Welcome, {{ user_name }} ❤️
+    </h1>
+
+    <p>
+        Let the moment bloom.
+    </p>
+
+</div>
+
+
+<script>
+
+const stars =
+    document.getElementById(
+        "stars"
+    );
+
+
+for (
+    let i = 0;
+    i < 100;
+    i++
+) {
+
+    const star =
+        document.createElement(
+            "div"
+        );
+
+    star.className =
+        "star";
+
+    star.style.left =
+        Math.random() * 100 + "%";
+
+    star.style.top =
+        Math.random() * 100 + "%";
+
+    star.style.animationDelay =
+        Math.random() * 3 + "s";
+
+    stars.appendChild(star);
+}
+
+</script>
+
+
+</body>
+
+</html>
